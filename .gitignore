@@ -1,0 +1,37 @@
+# Operating System
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editors
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Java & Spring Boot (Backend)
+backend/target/
+backend/build/
+backend/.gradle/
+*.class
+*.jar
+*.war
+
+# Node & React (Frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.npm
+.yarn/
+.vite/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.log
