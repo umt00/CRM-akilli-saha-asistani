@@ -1,1 +1,0 @@
-# CRM-akilli-saha-asistani
