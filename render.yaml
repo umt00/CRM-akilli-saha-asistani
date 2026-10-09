@@ -1,0 +1,45 @@
+# Akıllı Saha CRM - Render.com Blueprint (Infrastructure-as-Code)
+# Katman 8 (DevOps & Hosting) ve Katman 9 (Keep-Alive)
+# $0 Maliyetli PoC Dağıtımı İçin Tek Tıkla Kurulum Sağlar.
+
+services:
+  - type: web
+    name: crm-akilli-saha-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    region: frankfurt # Türkiye'ye en yakın düşük gecikmeli Avrupa bölgesi
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
+    envVars:
+      # Üretim profili aktif edilir (application-prod.yml)
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # Supabase PostgreSQL bağlantı bilgileri (Render Dashboard'dan tanımlanır)
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+      # 256-bit JWT gizli anahtarı (Render otomatik üretir veya kullanıcı tanımlar)
+      - key: JWT_SECRET
+        generateValue: true
+
+      # JWT geçerlilik süresi (24 saat = 86400000 ms)
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+
+      # Vercel üzerinde barındırılan Frontend SPA adresi (CORS izni)
+      - key: FRONTEND_URL
+        value: https://akilli-saha-crm.vercel.app
+
+      # Supabase Free Tier için optimize havuz boyutları
+      - key: DB_POOL_MAX
+        value: "5"
+      - key: DB_POOL_MIN
+        value: "1"

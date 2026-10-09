@@ -1,0 +1,89 @@
+# Akıllı Saha CRM - Üretim (Production) Ortamı Konfigürasyonu
+# Katman 8 (DevOps & Hosting) ve Katman 9 (Sağlık & Keep-Alive)
+# Render.com Web Service ve Supabase PostgreSQL ($0 PoC) hedeflidir.
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /
+  # Bulut ortamlarında reverse proxy arkasında gerçek istemci IP ve HTTPS protokolünü alma
+  forward-headers-strategy: native
+
+spring:
+  application:
+    name: crm-backend
+
+  datasource:
+    # Supabase veya Azure PostgreSQL bağlantı adresi (örn: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?sslmode=require)
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Supabase Free Tier bağlantı sınırını korumak için optimize edilmiş havuz boyutu
+      maximum-pool-size: ${DB_POOL_MAX:5}
+      minimum-idle: ${DB_POOL_MIN:1}
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      leak-detection-threshold: 20000
+      pool-name: CrmProdHikariPool
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
+
+# JWT Güvenlik Konfigürasyonu (Üretimde güçlü 256-bit çevre değişkeni zorunludur)
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 saat
+
+# CORS İzinleri (Vercel CDN üzerindeki canlı Frontend SPA adresi)
+cors:
+  allowed-origins: ${FRONTEND_URL:https://akilli-saha-crm.vercel.app}
+
+# Katman 9: UptimeRobot Keep-Alive & Actuator İzleme
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+# Swagger / OpenAPI - Üretimde de dokümantasyon testi için açık tutulur
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

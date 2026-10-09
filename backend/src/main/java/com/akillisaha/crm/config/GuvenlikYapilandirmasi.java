@@ -84,6 +84,7 @@ public class GuvenlikYapilandirmasi {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/actuator/health",
+                                "/actuator/health/**",
                                 "/actuator/info"
                         ).permitAll()
                         .anyRequest().authenticated()
