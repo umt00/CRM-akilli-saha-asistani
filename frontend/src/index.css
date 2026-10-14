@@ -14,21 +14,21 @@
   }
 }
 
-/* Özel Akıllı Scrollbar */
+/* Yeşiller Gıda Özel Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #0a140e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #185831;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #1d6e3c;
 }

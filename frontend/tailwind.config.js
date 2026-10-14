@@ -7,23 +7,29 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Yeşiller Gıda (https://www.yesillergida.com.tr/) Kurumsal Renk Paleti
         primary: {
-          50: '#f0f7ff',
-          100: '#e0effe',
-          200: '#b9dffe',
-          300: '#7cc2fd',
-          400: '#36a3fa',
-          500: '#0c86eb',
-          600: '#0069c7',
-          700: '#0154a1',
-          800: '#054784',
-          900: '#0a3c6e',
-          950: '#072649',
+          50: '#f2f9f4',
+          100: '#e1f2e6',
+          200: '#c4e5ce',
+          300: '#98d2aa',
+          400: '#64b780',
+          500: '#3a8155',  // Sitedeki açık vurgu yeşili
+          600: '#1d6e3c',  // Sitedeki ana kurumsal yeşil (#1d6e3c)
+          700: '#185831',
+          800: '#154728',
+          900: '#123b23',
+          950: '#072112',
         },
-        slate: {
-          850: '#151e2e',
-          900: '#0f172a',
-          950: '#080d1a',
+        // Gıda sektörüne özel sıcak altın/bal tonları (Teklif & Önemli Vurgular)
+        gold: {
+          500: '#e69500',
+          600: '#cf8200',
+        },
+        forest: {
+          850: '#0f1c14',
+          900: '#0a140e',
+          950: '#050c08',
         },
       },
       fontFamily: {
@@ -33,7 +39,7 @@ export default {
         'soft-sm': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
         'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
         'soft-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
-        'glow-primary': '0 0 15px -2px rgba(12, 134, 235, 0.35)',
+        'glow-primary': '0 0 20px -2px rgba(29, 110, 60, 0.45)',
       },
     },
   },
