@@ -56,6 +56,16 @@ public interface TeklifRepository extends JpaRepository<Teklif, Long> {
     Page<Teklif> findByDurum(TeklifDurumu durum, Pageable sayfalama);
 
     /**
+     * İki tarih arasında geçerlilik süresi dolacak teklifleri listeler.
+     */
+    List<Teklif> findByGecerlilikTarihiBetween(java.time.OffsetDateTime baslangicTarihi, java.time.OffsetDateTime bitisTarihi);
+
+    /**
+     * Belirli bir plasiyerin iki tarih arasında geçerlilik süresi dolacak tekliflerini listeler.
+     */
+    List<Teklif> findByPlasiyerIdAndGecerlilikTarihiBetween(Long plasiyerId, java.time.OffsetDateTime baslangicTarihi, java.time.OffsetDateTime bitisTarihi);
+
+    /**
      * Belirli bir durumdaki tekliflerin toplam parasal tutarını hesaplar.
      * 
      * @param durum Teklif durumu

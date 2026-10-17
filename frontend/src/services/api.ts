@@ -1,11 +1,6 @@
 /**
  * Akıllı Saha CRM - Merkezi API İstemcisi ve Servis Metotları
- * 3. Kişi (Frontend Geliştirici) için hazır Axios entegrasyonu.
- * 
- * Otomatik Yetkilendirme: 'Authorization: Bearer <token>' başlığını ekler.
- * Hata Yönetimi: 401 Unauthorized durumunda oturumu temizler ve yönlendirir.
- * 
- * @author Akıllı Saha CRM Ekibi
+ * Backend REST API uç noktalarıyla tam entegrasyon sağlar.
  */
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
@@ -23,16 +18,15 @@ import {
   ZiyaretYaniti,
   NumuneIstegi,
   NumuneYaniti,
-  NumuneIstatistikYaniti,
   NumuneDurumu,
   TeklifIstegi,
   TeklifYaniti,
   TeklifDurumu,
   SayfalanmisYanit,
   ExcelIceAktarimSonucuYaniti,
+  TakvimEtkinlikYaniti,
 } from '../types/crm.types';
 
-// API Temel Adresi: Vite ortam değişkeni veya yerel proxy
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 export const apiClient: AxiosInstance = axios.create({
@@ -43,10 +37,10 @@ export const apiClient: AxiosInstance = axios.create({
   timeout: 30000,
 });
 
-// İstek Araya Giricisi (Request Interceptor): Her isteğe JWT belirtecini ekler
+// Request Interceptor: Her isteğe JWT Bearer belirtecini ekler
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('erisimBelirteci');
+    const token = localStorage.getItem('erisimBelirteci') || localStorage.getItem('token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -55,16 +49,15 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Yanıt Araya Giricisi (Response Interceptor): 401 durumunda oturumu sonlandırır
+// Response Interceptor
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('erisimBelirteci');
+      localStorage.removeItem('token');
       localStorage.removeItem('aktifKullanici');
-      if (window.location.pathname !== '/giris') {
-        window.location.href = '/giris';
-      }
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
     return Promise.reject(error);
   }
@@ -75,23 +68,48 @@ apiClient.interceptors.response.use(
 // =============================================================================
 
 export const authApi = {
-  girisYap: async (istek: GirisIstegi): Promise<GirisYaniti> => {
-    const res: AxiosResponse<IslemSonucu<GirisYaniti>> = await apiClient.post(
+  girisYap: async (istek: GirisIstegi): Promise<any> => {
+    const res: AxiosResponse<IslemSonucu<any>> = await apiClient.post(
       '/kimlik-dogrulama/giris',
       istek
     );
     const data = res.data.veri;
-    localStorage.setItem('erisimBelirteci', data.erisimBelirteci);
-    localStorage.setItem('aktifKullanici', JSON.stringify(data.kullanici));
-    return data;
+    const token = data.token || data.erisimBelirteci;
+    const user: KullaniciOzetiYaniti = data.kullanici || {
+      id: data.kullaniciId,
+      eposta: data.eposta,
+      adSoyad: data.adSoyad,
+      rol: data.rol,
+      telefon: data.telefon,
+    };
+    if (token) {
+      localStorage.setItem('erisimBelirteci', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('aktifKullanici', JSON.stringify(user));
+    }
+    return { ...data, token, user };
   },
 
-  kayitOl: async (istek: KayitIstegi): Promise<GirisYaniti> => {
-    const res: AxiosResponse<IslemSonucu<GirisYaniti>> = await apiClient.post(
+  kayitOl: async (istek: KayitIstegi): Promise<any> => {
+    const res: AxiosResponse<IslemSonucu<any>> = await apiClient.post(
       '/kimlik-dogrulama/kayit',
       istek
     );
-    return res.data.veri;
+    const data = res.data.veri;
+    const token = data.token || data.erisimBelirteci;
+    const user: KullaniciOzetiYaniti = data.kullanici || {
+      id: data.kullaniciId,
+      eposta: data.eposta,
+      adSoyad: data.adSoyad,
+      rol: data.rol,
+      telefon: data.telefon,
+    };
+    if (token) {
+      localStorage.setItem('erisimBelirteci', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('aktifKullanici', JSON.stringify(user));
+    }
+    return { ...data, token, user };
   },
 
   profilim: async (): Promise<KullaniciOzetiYaniti> => {
@@ -103,8 +121,22 @@ export const authApi = {
 
   cikisYap: () => {
     localStorage.removeItem('erisimBelirteci');
+    localStorage.removeItem('token');
     localStorage.removeItem('aktifKullanici');
-    window.location.href = '/giris';
+    window.dispatchEvent(new CustomEvent('auth:logout'));
+  },
+
+  getAktifKullanici: (): KullaniciOzetiYaniti | null => {
+    try {
+      const stored = localStorage.getItem('aktifKullanici');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  getToken: (): string | null => {
+    return localStorage.getItem('erisimBelirteci') || localStorage.getItem('token');
   },
 };
 
@@ -112,11 +144,11 @@ export const firmaApi = {
   firmalariGetir: async (
     aramaMetni = '',
     sayfa = 0,
-    boyut = 20
+    boyut = 50
   ): Promise<SayfalanmisYanit<FirmaYaniti>> => {
     const res: AxiosResponse<IslemSonucu<SayfalanmisYanit<FirmaYaniti>>> = await apiClient.get(
       '/firmalar',
-      { params: { arama: aramaMetni, sayfa, boyut } }
+      { params: { arama: aramaMetni || undefined, sayfa, boyut } }
     );
     return res.data.veri;
   },
@@ -147,16 +179,21 @@ export const firmaApi = {
     );
     return res.data.veri;
   },
+
+  yetkiliSil: async (firmaId: number, yetkiliId: number): Promise<void> => {
+    await apiClient.delete(`/firmalar/${firmaId}/yetkililer/${yetkiliId}`);
+  },
 };
 
 export const ziyaretApi = {
   ziyaretleriGetir: async (
     sayfa = 0,
-    boyut = 20
+    boyut = 50,
+    firmaId?: number
   ): Promise<SayfalanmisYanit<ZiyaretYaniti>> => {
     const res: AxiosResponse<IslemSonucu<SayfalanmisYanit<ZiyaretYaniti>>> = await apiClient.get(
       '/ziyaretler',
-      { params: { sayfa, boyut } }
+      { params: { sayfa, boyut, firmaId } }
     );
     return res.data.veri;
   },
@@ -167,6 +204,10 @@ export const ziyaretApi = {
       istek
     );
     return res.data.veri;
+  },
+
+  ziyaretSil: async (id: number): Promise<void> => {
+    await apiClient.delete(`/ziyaretler/${id}`);
   },
 
   ajandaZiyaretleriniGetir: async (): Promise<ZiyaretYaniti[]> => {
@@ -180,11 +221,21 @@ export const ziyaretApi = {
 export const numuneApi = {
   numuneleriGetir: async (
     sayfa = 0,
-    boyut = 20
+    boyut = 50,
+    durum?: NumuneDurumu,
+    firmaId?: number
   ): Promise<SayfalanmisYanit<NumuneYaniti>> => {
     const res: AxiosResponse<IslemSonucu<SayfalanmisYanit<NumuneYaniti>>> = await apiClient.get(
       '/numuneler',
-      { params: { sayfa, boyut } }
+      { params: { sayfa, boyut, durum, firmaId } }
+    );
+    return res.data.veri;
+  },
+
+  numuneOlustur: async (istek: NumuneIstegi): Promise<NumuneYaniti> => {
+    const res: AxiosResponse<IslemSonucu<NumuneYaniti>> = await apiClient.post(
+      '/numuneler',
+      istek
     );
     return res.data.veri;
   },
@@ -202,8 +253,12 @@ export const numuneApi = {
     return res.data.veri;
   },
 
-  numuneIstatistikleriGetir: async (): Promise<NumuneIstatistikYaniti> => {
-    const res: AxiosResponse<IslemSonucu<NumuneIstatistikYaniti>> = await apiClient.get(
+  numuneSil: async (id: number): Promise<void> => {
+    await apiClient.delete(`/numuneler/${id}`);
+  },
+
+  numuneIstatistikleriGetir: async (): Promise<Record<string, number>> => {
+    const res: AxiosResponse<IslemSonucu<Record<string, number>>> = await apiClient.get(
       '/numuneler/istatistikler'
     );
     return res.data.veri;
@@ -213,11 +268,21 @@ export const numuneApi = {
 export const teklifApi = {
   teklifleriGetir: async (
     sayfa = 0,
-    boyut = 20
+    boyut = 50,
+    durum?: TeklifDurumu,
+    firmaId?: number
   ): Promise<SayfalanmisYanit<TeklifYaniti>> => {
     const res: AxiosResponse<IslemSonucu<SayfalanmisYanit<TeklifYaniti>>> = await apiClient.get(
       '/teklifler',
-      { params: { sayfa, boyut } }
+      { params: { sayfa, boyut, durum, firmaId } }
+    );
+    return res.data.veri;
+  },
+
+  teklifOlustur: async (istek: TeklifIstegi): Promise<TeklifYaniti> => {
+    const res: AxiosResponse<IslemSonucu<TeklifYaniti>> = await apiClient.post(
+      '/teklifler',
+      istek
     );
     return res.data.veri;
   },
@@ -229,6 +294,10 @@ export const teklifApi = {
       { params: { durum } }
     );
     return res.data.veri;
+  },
+
+  teklifSil: async (id: number): Promise<void> => {
+    await apiClient.delete(`/teklifler/${id}`);
   },
 };
 
@@ -250,5 +319,32 @@ export const excelApi = {
       { headers: { 'Content-Type': 'multipart/form-data' } }
     );
     return res.data.veri;
+  },
+};
+
+export const takvimApi = {
+  etkinlikleriGetir: async (
+    baslangic?: string,
+    bitis?: string,
+    tur?: string
+  ): Promise<TakvimEtkinlikYaniti[]> => {
+    const res: AxiosResponse<IslemSonucu<TakvimEtkinlikYaniti[]>> = await apiClient.get(
+      '/takvim/etkinlikler',
+      {
+        params: {
+          baslangic: baslangic || undefined,
+          bitis: bitis || undefined,
+          tur: tur || undefined,
+        },
+      }
+    );
+    return res.data.veri || [];
+  },
+};
+
+export const systemApi = {
+  healthCheck: async (): Promise<{ status: string }> => {
+    const res = await axios.get('/actuator/health');
+    return res.data;
   },
 };

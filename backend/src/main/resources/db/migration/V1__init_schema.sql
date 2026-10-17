@@ -146,8 +146,8 @@ CREATE INDEX IF NOT EXISTS idx_offers_status ON offers(status);
 -- =====================================================================
 INSERT INTO users (email, password_hash, full_name, role, is_active)
 VALUES 
-('admin@akillisaha.com', '$2a$10$7Zk8lC6oEreM65ZfPvZPTejQvWkn8qQv0p8f9tKvZ8r7s9X1s1W1q', 'Sistem Yöneticisi', 'ADMIN', true),
-('temsilci@akillisaha.com', '$2a$10$7Zk8lC6oEreM65ZfPvZPTejQvWkn8qQv0p8f9tKvZ8r7s9X1s1W1q', 'Ahmet Saha Temsilcisi', 'SALES_REP', true)
+('admin@akillisaha.com', '$2a$10$.landQCnxgVL/7LBYGdGoOkEXqRvQj83bywYZUpawh6xEvL1A/It.', 'Sistem Yöneticisi', 'YONETICI', true),
+('temsilci@akillisaha.com', '$2a$10$.landQCnxgVL/7LBYGdGoOkEXqRvQj83bywYZUpawh6xEvL1A/It.', 'Ahmet Saha Temsilcisi', 'PLASIYER', true)
 ON CONFLICT (email) DO NOTHING;
 
 -- Örnek Ürünler

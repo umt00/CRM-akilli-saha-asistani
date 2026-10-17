@@ -7,7 +7,6 @@ import com.akillisaha.crm.enums.NumuneDurumu;
 import com.akillisaha.crm.enums.Rol;
 import com.akillisaha.crm.enums.TeklifDurumu;
 import com.akillisaha.crm.exception.ErisimEngellendiHatasi;
-import com.akillisaha.crm.exception.KaynakBulunamadiHatasi;
 import com.akillisaha.crm.repository.*;
 import com.akillisaha.crm.security.OzelKullaniciDetaylari;
 import com.akillisaha.crm.service.impl.ZiyaretServisiImpl;

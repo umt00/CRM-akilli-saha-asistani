@@ -121,9 +121,7 @@ class FirmaRepositoryTest {
         entityManager.persist(f3);
         entityManager.flush();
 
-        // Act 1: Şehirde "çankaya" geçenler (f1'in şehri "Ankara / Çankaya", f3'ün unvanı "Çankaya Gıda...")
-        Page<Firma> cankayaSonucu = firmaRepository.firmalardaAra("cankaya", PageRequest.of(0, 10));
-        // Note: In Turkish/PostgreSQL unaccent or lower, let's test lower without accent if H2
+        // Act: Unvanda "tatlı" geçenler
         Page<Firma> tatliSonucu = firmaRepository.firmalardaAra("tatlı", PageRequest.of(0, 10));
 
         // Assert

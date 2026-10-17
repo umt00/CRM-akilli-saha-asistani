@@ -66,6 +66,16 @@ public interface ZiyaretRepository extends JpaRepository<Ziyaret, Long> {
     List<Ziyaret> findByPlasiyerIdAndZiyaretTarihiBetween(Long plasiyerId, OffsetDateTime baslangicTarihi, OffsetDateTime bitisTarihi);
 
     /**
+     * İki tarih arasındaki sonraki randevuları listeler.
+     */
+    List<Ziyaret> findBySonrakiZiyaretTarihiBetween(OffsetDateTime baslangicTarihi, OffsetDateTime bitisTarihi);
+
+    /**
+     * Belirli bir plasiyerin iki tarih arasındaki randevularını listeler.
+     */
+    List<Ziyaret> findByPlasiyerIdAndSonrakiZiyaretTarihiBetween(Long plasiyerId, OffsetDateTime baslangicTarihi, OffsetDateTime bitisTarihi);
+
+    /**
      * Ajanda / Yaklaşan Ziyaretler: Sonraki randevu tarihi belirtilen tarihten önce veya eşit olan kayıtları getirir.
      * 
      * @param tarih Karşılaştırma zamanı

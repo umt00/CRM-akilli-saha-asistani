@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   CalendarCheck,
+  CalendarDays,
   Building2,
   FlaskConical,
   FileText,
@@ -35,6 +36,15 @@ export const NAV_ITEMS: NavItem[] = [
     badge: '3 Bugün',
     badgeColor: 'primary',
     description: '30 saniyede saha ziyareti kaydı',
+  },
+  {
+    id: 'takvim',
+    label: 'Akıllı Takvim',
+    path: '/takvim',
+    icon: CalendarDays,
+    badge: 'Bitrix24',
+    badgeColor: 'primary',
+    description: 'Ay, hafta ve randevu ajandası',
   },
   {
     id: 'musteriler',

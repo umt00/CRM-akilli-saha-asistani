@@ -65,6 +65,16 @@ public interface NumuneRepository extends JpaRepository<Numune, Long> {
     Page<Numune> findByPlasiyerIdAndDurum(Long plasiyerId, NumuneDurumu durum, Pageable sayfalama);
 
     /**
+     * İki tarih arasında açılan numuneleri listeler.
+     */
+    List<Numune> findByOlusturulmaTarihiBetween(java.time.OffsetDateTime baslangicTarihi, java.time.OffsetDateTime bitisTarihi);
+
+    /**
+     * Belirli bir plasiyerin iki tarih arasındaki numunelerini listeler.
+     */
+    List<Numune> findByPlasiyerIdAndOlusturulmaTarihiBetween(Long plasiyerId, java.time.OffsetDateTime baslangicTarihi, java.time.OffsetDateTime bitisTarihi);
+
+    /**
      * Belirli bir durumdaki toplam numune sayısını döner.
      * 
      * @param durum Numune durumu

@@ -60,10 +60,25 @@ export interface KayitIstegi {
 }
 
 export interface GirisYaniti {
-  erisimBelirteci: string;
-  belirtecTuru: string;
-  gecerlilikSuresiMs: number;
-  kullanici: KullaniciOzetiYaniti;
+  token?: string;
+  tokenTipi?: string;
+  erisimBelirteci?: string;
+  belirtecTuru?: string;
+  kullaniciId?: number;
+  eposta?: string;
+  adSoyad?: string;
+  rol?: Rol;
+  gecerlilikSuresiMs?: number;
+  kullanici?: KullaniciOzetiYaniti;
+}
+
+export interface KimlikDogrulamaYaniti {
+  token: string;
+  tokenTipi: string;
+  kullaniciId: number;
+  eposta: string;
+  adSoyad: string;
+  rol: Rol;
 }
 
 export interface KullaniciOzetiYaniti {
@@ -72,6 +87,16 @@ export interface KullaniciOzetiYaniti {
   adSoyad: string;
   rol: Rol;
   telefon?: string;
+  aktifMi?: boolean;
+}
+
+export interface Urun {
+  id: number;
+  code: string;
+  name: string;
+  brand: string;
+  category: string;
+  unit: string;
 }
 
 // =============================================================================
@@ -122,11 +147,12 @@ export interface FirmaYaniti {
   tedarikEttigiUrunler?: string;
   aylikKullanimMiktari?: string;
   bizdenAldigiUrunler?: string;
-  atananPlasiyerId: number;
-  atananPlasiyerAdSoyad: string;
-  yetkililer: YetkiliYaniti[];
-  olusturulmaTarihi: string;
-  guncellenmeTarihi: string;
+  atananPlasiyerId?: number;
+  atananPlasiyerAdi?: string;
+  atananPlasiyerAdSoyad?: string;
+  yetkililer?: YetkiliYaniti[];
+  olusturulmaTarihi?: string;
+  guncellenmeTarihi?: string;
 }
 
 // =============================================================================
@@ -146,7 +172,7 @@ export interface ZiyaretIstegi {
   numuneUrunId?: number;
   numuneUrunAdi?: string;
   numuneMarka?: string;
-  numuneMiktar?: number;
+  numuneMiktar?: number | string;
   teklifVerildiMi?: boolean;
   teklifBaslik?: string;
   teklifTutari?: number;
@@ -159,13 +185,17 @@ export interface ZiyaretIstegi {
 export interface ZiyaretYaniti {
   id: number;
   firmaId: number;
-  firmaUnvani: string;
+  firmaAdi?: string;
+  firmaUnvani?: string;
   sehirBolge?: string;
   yetkiliId?: number;
+  yetkiliAdi?: string;
   yetkiliAdSoyad?: string;
+  yetkiliGorevi?: string;
   yetkiliUnvanGorev?: string;
   plasiyerId: number;
-  plasiyerAdSoyad: string;
+  plasiyerAdi?: string;
+  plasiyerAdSoyad?: string;
   ziyaretTarihi: string;
   ziyaretKonusu: string;
   tedarikEttigiUrunler?: string;
@@ -177,8 +207,8 @@ export interface ZiyaretYaniti {
   sonrakiAksiyon?: string;
   sonrakiZiyaretTarihi?: string;
   notlar?: string;
-  numuneler: NumuneYaniti[];
-  teklifler: TeklifYaniti[];
+  numuneler?: NumuneYaniti[];
+  teklifler?: TeklifYaniti[];
   olusturulmaTarihi: string;
 }
 
@@ -192,7 +222,7 @@ export interface NumuneIstegi {
   urunId?: number;
   urunAdi: string;
   marka?: string;
-  miktar: number;
+  miktar: number | string;
   sonucNotlari?: string;
 }
 
@@ -200,13 +230,15 @@ export interface NumuneYaniti {
   id: number;
   ziyaretId?: number;
   firmaId: number;
-  firmaUnvani: string;
+  firmaAdi?: string;
+  firmaUnvani?: string;
   plasiyerId: number;
-  plasiyerAdSoyad: string;
+  plasiyerAdi?: string;
+  plasiyerAdSoyad?: string;
   urunId?: number;
   urunAdi: string;
   marka?: string;
-  miktar: number;
+  miktar: any;
   durum: NumuneDurumu;
   sonucNotlari?: string;
   gonderimTarihi: string;
@@ -237,10 +269,12 @@ export interface TeklifIstegi {
 export interface TeklifYaniti {
   id: number;
   firmaId: number;
-  firmaUnvani: string;
+  firmaAdi?: string;
+  firmaUnvani?: string;
   ziyaretId?: number;
   plasiyerId: number;
-  plasiyerAdSoyad: string;
+  plasiyerAdi?: string;
+  plasiyerAdSoyad?: string;
   baslik: string;
   tutar: number;
   paraBirimi: string;
@@ -259,4 +293,31 @@ export interface ExcelIceAktarimSonucuYaniti {
   basariliKayitSayisi: number;
   hataliSatirSayisi: number;
   hataDetaylari: string[];
+}
+
+// =============================================================================
+// 8. Bitrix24 İnteraktif Takvim ve Etkinlik Modelleri
+// =============================================================================
+
+export interface TakvimEtkinlikYaniti {
+  id: string; // e.g. "RANDEVU-1", "ZIYARET-1"
+  baslik: string;
+  tarih: string; // ISO date string
+  bitisTarihi?: string;
+  tur: 'RANDEVU' | 'ZIYARET' | 'NUMUNE' | 'TEKLIF';
+  turEtiketi: string;
+  renkKodu: string;
+  firmaId?: number;
+  firmaUnvani?: string;
+  sehirBolge?: string;
+  yetkiliAdSoyad?: string;
+  yetkiliUnvan?: string;
+  yetkiliTelefon?: string;
+  yetkiliEposta?: string;
+  plasiyerId?: number;
+  plasiyerAdSoyad?: string;
+  aciklama?: string;
+  durum?: string;
+  referansId?: number;
+  oncelik?: 'NORMAL' | 'YUKSEK' | 'ACIL';
 }
