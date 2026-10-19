@@ -348,3 +348,39 @@ export const systemApi = {
     return res.data;
   },
 };
+
+export interface SahaNotuIstegi {
+  hamMetin: string;
+  gonderenTel?: string;
+  plasiyerId?: number;
+  tetikleyici?: string;
+}
+
+export interface SahaNotuYaniti {
+  basarili: boolean;
+  teyitMesaji: string;
+  firmaId?: number;
+  firmaUnvani?: string;
+  yetkiliAdi?: string;
+  ziyaretId?: number;
+  numuneId?: number;
+  numuneDetayi?: string;
+  teklifId?: number;
+  teklifDetayi?: string;
+  cikarilanBilgiler?: Record<string, any>;
+}
+
+export const webhookApi = {
+  sahaNotuGonder: async (istek: SahaNotuIstegi): Promise<SahaNotuYaniti> => {
+    const res: AxiosResponse<IslemSonucu<SahaNotuYaniti>> = await apiClient.post(
+      '/webhook/saha-notu',
+      istek,
+      {
+        headers: {
+          'X-Webhook-Secret': 'akillisaha-crm-secret-2026',
+        },
+      }
+    );
+    return res.data.veri;
+  },
+};

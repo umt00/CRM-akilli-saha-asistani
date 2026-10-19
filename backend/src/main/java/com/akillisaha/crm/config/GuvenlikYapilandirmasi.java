@@ -80,6 +80,7 @@ public class GuvenlikYapilandirmasi {
                 .authorizeHttpRequests(yetki -> yetki
                         .requestMatchers(
                                 "/api/v1/kimlik-dogrulama/**",
+                                "/api/v1/webhook/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

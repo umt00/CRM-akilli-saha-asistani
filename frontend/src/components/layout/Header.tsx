@@ -7,7 +7,9 @@ import {
   FlaskConical,
   X,
   CheckCircle2,
+  MessageSquare,
 } from 'lucide-react';
+import { WhatsAppSahaNotuModal } from '../common/WhatsAppSahaNotuModal';
 
 interface HeaderProps {
   onQuickAction?: (actionType: 'ziyaret' | 'numune') => void;
@@ -18,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ onQuickAction }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickModal, setShowQuickModal] = useState(false);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
 
   return (
     <header className="h-16 sticky top-0 z-20 bg-forest-900/90 backdrop-blur-md border-b border-forest-850 px-4 sm:px-6 flex items-center justify-between gap-4">
@@ -64,6 +67,16 @@ export const Header: React.FC<HeaderProps> = ({ onQuickAction }) => {
           <Search className="w-4 h-4" />
         </button>
 
+        {/* WhatsApp Saha Asistanı Butonu (n8n Webhook) */}
+        <button
+          onClick={() => setShowWhatsAppModal(true)}
+          className="inline-flex items-center gap-1.5 bg-[#00a884] hover:bg-[#25d366] active:scale-95 text-white hover:text-black text-xs font-semibold px-3 py-2 rounded-xl shadow-md shadow-emerald-950/60 transition-all border border-emerald-400/30"
+          title="WhatsApp Saha Asistanı (n8n Webhook Simülatörü)"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span className="hidden sm:inline">WhatsApp Asistanı</span>
+        </button>
+
         {/* Sahada Hızlı Kayıt Butonu */}
         <div className="relative">
           <button
@@ -80,6 +93,21 @@ export const Header: React.FC<HeaderProps> = ({ onQuickAction }) => {
               <div className="text-[11px] font-bold text-slate-400 px-2 py-1 uppercase tracking-wider">
                 Saha Hızlı Aksiyon
               </div>
+              <button
+                onClick={() => {
+                  setShowQuickModal(false);
+                  setShowWhatsAppModal(true);
+                }}
+                className="w-full flex items-center gap-2.5 px-2.5 py-2 text-xs text-slate-200 hover:text-white hover:bg-forest-900 rounded-lg transition-colors text-left"
+              >
+                <div className="p-1 rounded-md bg-emerald-500/20 text-emerald-400">
+                  <MessageSquare className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="font-medium text-emerald-300">WhatsApp Notu Simüle Et</div>
+                  <div className="text-[10px] text-slate-400">n8n serbest metin motoru</div>
+                </div>
+              </button>
               <button
                 onClick={() => {
                   setShowQuickModal(false);
@@ -191,6 +219,16 @@ export const Header: React.FC<HeaderProps> = ({ onQuickAction }) => {
           </button>
         </div>
       )}
+
+      {/* WhatsApp Saha Asistanı Simülatörü Modal */}
+      <WhatsAppSahaNotuModal
+        isOpen={showWhatsAppModal}
+        onClose={() => setShowWhatsAppModal(false)}
+        onSuccess={() => {
+          // Sistemdeki listeleri veya bildirimleri tetikle
+          window.dispatchEvent(new CustomEvent('crm:refreshData'));
+        }}
+      />
     </header>
   );
 };
