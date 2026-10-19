@@ -35,3 +35,8 @@ frontend/build/
 .env.local
 .env.*.local
 *.log
+
+# WhatsApp Bridge
+whatsapp-bridge/node_modules/
+whatsapp-bridge/auth_info_baileys/
+
