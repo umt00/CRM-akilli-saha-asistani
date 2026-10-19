@@ -1,0 +1,376 @@
+/* ==========================================================================
+   Bitrix24 Style Kanban Deals & Offers Pipeline Styles
+   ========================================================================== */
+
+.kanban-board-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+}
+
+/* Kanban Toolbar: Search, Filters, View Switcher */
+.kanban-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: var(--bg-surface, #111827);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+.kanban-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-input, #0d131f);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  min-width: 260px;
+}
+
+.kanban-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary, #f3f4f6);
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.kanban-view-toggle {
+  display: flex;
+  background: var(--bg-input, #0d131f);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.kanban-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #9ca3af);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kanban-toggle-btn.active {
+  background: var(--primary, #6366f1);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
+}
+
+/* Kanban Columns Grid / Horizontal Scroll */
+.kanban-columns-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(290px, 1fr));
+  gap: 1rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 1.5rem;
+  min-height: calc(100vh - 320px);
+}
+
+@media (max-width: 1200px) {
+  .kanban-columns-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .kanban-column {
+    min-width: 300px;
+    width: 300px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+}
+
+/* Single Column */
+.kanban-column {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: calc(100vh - 280px);
+}
+
+.kanban-column.drag-over {
+  border: 2px dashed #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
+  transform: scale(1.008);
+}
+
+/* Column Header */
+.kanban-column-header {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.kanban-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban-column-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary, #f3f4f6);
+}
+
+.kanban-count-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #9ca3af);
+}
+
+.kanban-column-sum {
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Column Cards List (Scrollable) */
+.kanban-cards-list {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 120px;
+}
+
+.kanban-cards-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.kanban-cards-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Empty Column Placeholder */
+.kanban-empty-col {
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.78rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Individual Deal/Offer Card */
+.kanban-card {
+  background: var(--bg-surface-elevated, #1a2234);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.85rem;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+}
+
+.kanban-card.is-dragging {
+  opacity: 0.4;
+  transform: scale(0.96);
+  border: 2px dashed #6366f1;
+}
+
+/* Card Header */
+.kanban-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.kanban-card-company {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.kanban-card-company:hover {
+  color: #818cf8;
+}
+
+.kanban-card-title {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #9ca3af);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Money Tag */
+.kanban-card-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  font-weight: 800;
+  font-size: 1.05rem;
+  width: fit-content;
+}
+
+.kanban-card-currency {
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* Card Footer */
+.kanban-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.5rem;
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.kanban-card-rep {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #cbd5e1;
+}
+
+/* Quick Action Stage Buttons */
+.kanban-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.kanban-stage-btn {
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  transition: all 0.15s ease;
+}
+
+.kanban-stage-btn:hover {
+  transform: scale(1.05);
+}
+
+.kanban-stage-btn.win {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.kanban-stage-btn.win:hover {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.kanban-stage-btn.lose {
+  background: rgba(244, 63, 94, 0.2);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+.kanban-stage-btn.lose:hover {
+  background: #f43f5e;
+  color: #ffffff;
+}
+
+.kanban-stage-btn.reopen {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.kanban-stage-btn.reopen:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.kanban-card-delete-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.kanban-card-delete-btn:hover {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.1);
+}
