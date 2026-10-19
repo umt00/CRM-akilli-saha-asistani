@@ -3,6 +3,7 @@ import { teklifApi, firmaApi } from '../../services/api';
 import { TeklifYaniti, TeklifDurumu, TeklifIstegi, FirmaYaniti } from '../../types/crm.types';
 import { KanbanBoard } from './KanbanBoard';
 import { CompanyHoverCard } from '../../components/common/CustomerCard';
+import { CustomerDrawer } from '../../components/common/CustomerDrawer';
 import {
   DollarSign, CheckCircle2, XCircle, Clock, Plus, RefreshCw,
   Trash2, TrendingUp, Briefcase, LayoutGrid, List, Search, Filter,
@@ -16,6 +17,7 @@ export const OffersView: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCompany, setSelectedCompany] = useState<FirmaYaniti | null>(null);
 
   const [newOffer, setNewOffer] = useState<TeklifIstegi>({
     firmaId: 0,
@@ -246,6 +248,7 @@ export const OffersView: React.FC = () => {
           companies={companies}
           onUpdateStatus={handleUpdateStatus}
           onDeleteOffer={handleDeleteOffer}
+          onSelectCompany={(comp) => setSelectedCompany(comp)}
         />
       ) : (
         /* Classic Table View */
@@ -449,6 +452,14 @@ export const OffersView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Bitrix24 Customer 360° Sliding Drawer */}
+      <CustomerDrawer
+        company={selectedCompany}
+        isOpen={!!selectedCompany}
+        onClose={() => setSelectedCompany(null)}
+        onCompanyUpdated={loadData}
+      />
     </div>
   );
 };

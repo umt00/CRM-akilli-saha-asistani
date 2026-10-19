@@ -12,6 +12,7 @@ interface KanbanBoardProps {
   companies: FirmaYaniti[];
   onUpdateStatus: (id: number, newStatus: TeklifDurumu) => Promise<void>;
   onDeleteOffer: (id: number) => Promise<void>;
+  onSelectCompany?: (comp: FirmaYaniti) => void;
 }
 
 interface ColumnConfig {
@@ -63,6 +64,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   companies,
   onUpdateStatus,
   onDeleteOffer,
+  onSelectCompany,
 }) => {
   const [draggedOfferId, setDraggedOfferId] = useState<number | null>(null);
   const [activeDropColumn, setActiveDropColumn] = useState<TeklifDurumu | null>(null);
@@ -191,6 +193,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 </div>
               ) : (
                 columnOffers.map((offer) => {
+                  const matchedComp = companies.find((c) => c.id === offer.firmaId);
                   const companyData = getCompanyData(offer);
                   const isDragging = draggedOfferId === offer.id;
 
@@ -204,8 +207,15 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                     >
                       {/* Card Top: Company Hover Card & Delete */}
                       <div className="kanban-card-top">
-                        <CompanyHoverCard data={companyData}>
-                          <div className="kanban-card-company" title="Müşteri kartını incelemek için üzerine gelin">
+                        <CompanyHoverCard
+                          data={companyData}
+                          onOpenDetails={matchedComp && onSelectCompany ? () => onSelectCompany(matchedComp) : undefined}
+                        >
+                          <div
+                            className="kanban-card-company"
+                            title="Müşteri kartını incelemek için üzerine gelin, zaman çizelgesini açmak için tıklayın"
+                            onClick={() => matchedComp && onSelectCompany && onSelectCompany(matchedComp)}
+                          >
                             <Building2 size={14} className="text-primary flex-shrink-0" />
                             <span className="truncate max-w-[190px]">{companyData.firmaUnvani}</span>
                           </div>
